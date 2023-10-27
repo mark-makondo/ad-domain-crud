@@ -12,13 +12,18 @@ dotenv.config();
 	await mongoDB.connect();
 
 	app.get("/start", async (_, res) => {
-        const domains = getDomainsFromTxt();
-        console.log("Saving [%s] items to database...", domains.length)
+		const domains = getDomainsFromTxt();
+		console.log("Saving [%s] items to database...", domains.length);
 		// if an error is thrown here, it's probably because you're trying to insert duplicate items
 		// and if that happens it will just skip that item and continue saving the rest
-        await DomainSchema.insertMany(domains, { ordered: false });
-        console.log("Saved [%s] items to database", domains.length)
+		await DomainSchema.insertMany(domains, { ordered: false });
+		console.log("Saved [%s] items to database", domains.length);
 		res.sendStatus(200);
+	});
+
+	app.get("/domains", async (_, res) => {
+		const domains = await DomainSchema.find({});
+		res.json(domains);
 	});
 
 	// Start the server
